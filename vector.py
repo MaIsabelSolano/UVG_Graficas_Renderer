@@ -34,14 +34,12 @@ class V3(object):
             )
 
     def __matmul__(self, other):
-        return self.x * other.x + self.y * other.y + self.z + other.z
+        return self.x * other.x + self.y * other.y + self.z * other.z
 
     def length(self):
-        return (self.x**2 + self.y**2 + self.z**2)**0.5
+        return ((self.x)**2 + (self.y)**2 + (self.z)**2)**0.5
 
     def normalize(self): #mod
-        #if (self.length() == 0):
-        #    return self * (1/(self.length()+0.001))
         return self * (1/self.length())
 
     def __repr__(self):

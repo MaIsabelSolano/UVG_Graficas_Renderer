@@ -372,7 +372,7 @@ class Render(object):
 
     def triangle_vector(self, A, B, C):
 
-        #"""
+        """
         Acolor = (
             random.randint(0, 255),
             random.randint(0, 255),
@@ -390,12 +390,11 @@ class Render(object):
         )
         #"""
 
-        
-        Light = V3(0, 0, 0.1)
+        Light = V3(0, 1, 1)
         Norm = (B - A) * (C - A)
-        print("Normal" ,Norm)
+        print("Normal" , Norm)
         print("Normal normalizada", Norm.normalize())
-        intensity = Norm.normalize() @ Light.normalize()
+        intensity = Norm.normalize() @ Light.normalize() 
 
         print("intensidad: ", intensity)
 
@@ -405,7 +404,7 @@ class Render(object):
         gris = round(255 * intensity)
         print("gris ", gris)
 
-        #self.current_color = color(gris, gris, gris)
+        self.current_color = color(gris, gris, gris)
 
         box_min, box_max = self.bounding_box(A, B, C)
         for x in range(round(box_min.x), round(box_max.x + 1)):
@@ -574,7 +573,7 @@ class Render(object):
         o = modelo_objeto
 
         for face in o.faces:
-    
+
             if (len(face) == 3):
                 f1 = face[0][0] -1
                 f2 = face[1][0] -1
@@ -585,7 +584,7 @@ class Render(object):
                 v3 = transform_vertex(o.vertices[f3], transformation, scale_factor)
 
                 # generar triángulo
-                self.triangle_vector(V3(v1[0], v1[1]), V3(v2[0], v2[1]), V3(v3[0], v3[1]))
+                self.triangle_vector(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]))
 
             if (len(face) == 4):
                 f1 = face[0][0] -1
@@ -598,14 +597,9 @@ class Render(object):
                 v3 = transform_vertex(o.vertices[f3], transformation, scale_factor)
                 v4 = transform_vertex(o.vertices[f4], transformation, scale_factor)
 
-                # generar las líneas
-                #self.line_vector(V3(v1[0], v1[1]), V3(v2[0], v2[1]))
-                #self.line_vector(V3(v2[0], v2[1]), V3(v3[0], v3[1]))
-                #self.line_vector(V3(v3[0], v3[1]), V3(v4[0], v4[1]))
-                #self.line_vector(V3(v4[0], v4[1]), V3(v1[0], v1[1]))
-
-                self.triangle_vector(V3(v1[0], v1[1]), V3(v2[0], v2[1]),V3(v3[0], v3[1]))
-                self.triangle_vector(V3(v1[0], v1[1]), V3(v3[0], v3[1]),V3(v4[0], v4[1]))
+                # Generar triángulos
+                self.triangle_vector(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]))
+                self.triangle_vector(V3(v1[0], v1[1], v1[2]), V3(v3[0], v3[1], v3[2]), V3(v4[0], v4[1], v4[2]))
 
         self.glFinish()
 
