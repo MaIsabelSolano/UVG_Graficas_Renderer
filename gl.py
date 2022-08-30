@@ -83,19 +83,26 @@ class Render(object):
     glClearColor: Determina el color con el que se realizará el Clear
 
     Parámetros:
-    c:(r,g,b) Color con el que se pintará
+    c:(int, int, int) Color con el que se pintará en formato rgb
     """
     def glClearColor(self, c):
         self.clear_color = c
 
     """
-    glColor: Cambia el color actual que se está utilizando
+    glColor: Void
+    
+    Cambia el color actual que se está utilizando
+
+    Parámetros: 
+    c:(int, int, int) Color con el que se pintará en formato rgb
     """
     def glColor(self, c):
         self.current_color = c
 
     """
-    glViewPort: Genera una ventana en la que se podrá
+    glViewPort: 
+    
+    Genera una ventana en la que se podrá
     únicamente escribir allí
 
     Parámetros: 
@@ -140,7 +147,9 @@ class Render(object):
         self.framebuffer = FB_temp
 
     """
-    glFinish: Escribe todo lo necesario para generar un archivo bmp y convierte cada
+    glFinish:Void
+        
+    Escribe todo lo necesario para generar un archivo bmp y convierte cada
     uno de los colores del FrameBuffer a un pixel en el archivo
 
     Parámetros:
@@ -187,7 +196,9 @@ class Render(object):
         f.close()
 
     """
-    Point: Cambia un color del Framebuffer al color actual, solamente si este está dentro de los límites
+    Point:Void
+    
+    Cambia un color del Framebuffer al color actual, solamente si este está dentro de los límites
     del archivo
 
     Parámetros:
@@ -200,7 +211,9 @@ class Render(object):
             self.framebuffer[y][x] = self.current_color
 
     """
-    Vertex: Genera un punto en la posición establecida en el ViewPort
+    Vertex:Void
+    
+    Genera un punto en la posición establecida en el ViewPort
 
     Parámetros:
     m:float[-1.0, 1.0] Posición en x del punto en el ViewPort
@@ -214,7 +227,9 @@ class Render(object):
       self.framebuffer[posy][posx] = self.current_color
 
     """
-    line: Genera una línea del color actual dado 2 puntos
+    line:Void
+    
+    Genera una línea del color actual dado 2 puntos
 
     i:(int, int) Punto inicial
     f:(int, int) Punto final
@@ -270,10 +285,13 @@ class Render(object):
                 threshold += dx * 2
 
     """
-    line: Genera una línea del color actual dado 2 puntos
+    line:Void
+    
+    Genera una línea del color actual dado 2 puntos
 
-    i:Vector Punto inicial
-    f:Vector Punto final
+    Parámetros:
+    i:(int, int) Vector Punto inicial
+    f:(int, int) Vector Punto final
     """
     def line_vector (self, i, f):
 
@@ -321,9 +339,14 @@ class Render(object):
                 threshold += dx * 2
 
     """
-    line_vertex
+    line_vertex:Void
+    
+    Genera una línea con el color actual dado 2 puntos que luego
+    transforma dentro del viewport 
 
-
+    Parámetros:
+    i:(int, int) Punto inicial
+    f:(int, int) Punto final
     """
     def line_vertex(self, i, f):
         # puntos inicial y final
@@ -375,7 +398,7 @@ class Render(object):
                 threshold += dx * 2
 
     """
-    triangle_vector:
+    triangle_vector: Genera un triángulo coloreado dado 3 vectores.
 
     Parámetros:
     A:V3
@@ -420,6 +443,16 @@ class Render(object):
                     self.zBuffer[x][y] = z
                     self.point(x, y)
 
+    """
+    bounding_box:(V3, V3)
+
+    Dados 3 vectores, determina los límites del triángulo que generan
+
+    Parámetros: 
+    v1:V3
+    v2:V3
+    v3:V3
+    """
     def bounding_box(self, v1, v2, v3):
         cordenadas = [(v1.x, v1.y), (v2.x, v2.y), (v3.x, v3.y)]
 
@@ -440,6 +473,17 @@ class Render(object):
 
         return (V3(x_min, y_min), V3(x_max, y_max))
 
+    """
+    barycentric:(float, float, float)
+    
+    Retorna las coordenadas varicéntricas
+
+    Parámetros:
+    A:V3
+    B:V3
+    C:V3
+    P:V3
+    """
     def barycentric(self, A, B, C, P):
 
         cordenada = V3(B.x - A.x, C.x - A.x, A.x - P.x) * V3(B.y - A.y, C.y - A.y, A.y - P.y)
@@ -518,7 +562,9 @@ class Render(object):
                 threshold += dx * 2
 
     """
-    load_model_wire: Genera las arístas entre los vértices dado un modelo 3D
+    load_model_wire:Void
+    
+    Genera las arístas entre los vértices dado un modelo 3D por medio de líneas no vectoriales
 
     Parámetros:
     modelo_objeto:Obj Modelo 3D que se desea generar
@@ -564,6 +610,16 @@ class Render(object):
 
         self.glFinish()
 
+    """
+    load_model_color:Void
+
+    Colorea un modelo 3D con tonalidades de gris dependiendo de la iluminación
+
+    Parámetros:
+    modelo_objeto:Obj Modelo 3D que se desea generar
+    scale_factor:(int, int) Escala en x y y para agrandar y achiquitar el objeto
+    transformation:int Pixeles en x y y de cuánto se desea mover el objeto en la pantalla
+    """
     def load_model_color(self, modelo_objeto, scale_factor, transformation):
         o = modelo_objeto
 
