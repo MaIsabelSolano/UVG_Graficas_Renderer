@@ -36,7 +36,7 @@ def transform_vertex(v, translate, scale):
     return [
         (v[0] * scale[0]) + translate[0],
         (v[1] * scale[1]) + translate[1], 
-        (v[2] * scale[2] + translate[2])
+        (v[2] * scale[2]) + translate[2]
     ]
 
 """ Clase Render: Produce la imagen BMP"""
@@ -73,6 +73,11 @@ class Render(object):
             [self.clear_color for x in range(self.width)]
             for y in range(self.height)
         ]
+        self.zBuffer = [
+            [-99999999 for x in range(self.width)]
+            for y in range(self.height)
+        ]
+        
 
     """
     glClearColor: Determina el color con el que se realizará el Clear
@@ -320,7 +325,6 @@ class Render(object):
 
 
     """
-
     def line_vertex(self, i, f):
         # puntos inicial y final
         x1, y1 = i
@@ -370,45 +374,32 @@ class Render(object):
                 y += 1 if (y1 < y2) else -1
                 threshold += dx * 2
 
-    def triangle_vector(self, A, B, C):
+    """
+    triangle_vector:
 
-        """
-        Acolor = (
-            random.randint(0, 255),
-            random.randint(0, 255),
-            random.randint(0, 255)
-        )
-        Bcolor = (
-            random.randint(0, 255),
-            random.randint(0, 255),
-            random.randint(0, 255)
-        )
-        Ccolor = (
-            random.randint(0, 255),
-            random.randint(0, 255),
-            random.randint(0, 255)
-        )
-        #"""
+    Parámetros:
+    A:V3
+    B:V3
+    C:V3
+    """
+    def triangle_vector(self, A, B, C):  
 
-        Light = V3(0, 1, 1)
+        Light = V3(0, 0.5, 1)
         Norm = (B - A) * (C - A)
-        print("Normal" , Norm)
-        print("Normal normalizada", Norm.normalize())
         intensity = Norm.normalize() @ Light.normalize() 
 
-        print("intensidad: ", intensity)
-
-        if intensity <= 0:
-            return
+        if (intensity < 0):
+            # return
+            intensity = abs(intensity)
 
         gris = round(255 * intensity)
-        print("gris ", gris)
 
         self.current_color = color(gris, gris, gris)
 
+
         box_min, box_max = self.bounding_box(A, B, C)
-        for x in range(round(box_min.x), round(box_max.x + 1)):
-            for y in range(round(box_min.y), round(box_max.y + 1)):
+        for x in range(round(box_min.x), round(box_max.x) + 1):
+            for y in range(round(box_min.y), round(box_max.y) + 1):
                 w, v, u = self.barycentric(A, B, C, V3(x, y))
 
                 if (w < 0 or v < 0 or u < 0):
@@ -423,7 +414,11 @@ class Render(object):
                 )
                 #"""
 
-                self.point(x, y)
+                z = A.z * w + B.z * u + C.z * v
+
+                if (self.zBuffer[x][y] < z  ):
+                    self.zBuffer[x][y] = z
+                    self.point(x, y)
 
     def bounding_box(self, v1, v2, v3):
         cordenadas = [(v1.x, v1.y), (v2.x, v2.y), (v3.x, v3.y)]
@@ -460,7 +455,7 @@ class Render(object):
         if (c_z != 0):
             u = c_x / c_z
             v = c_y / c_z
-            w = 1 - u - v
+            w = 1 - (u + v)
 
         return (w, v, u)
         
