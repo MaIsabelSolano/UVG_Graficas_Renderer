@@ -1,4 +1,3 @@
-import random
 import struct 
 from vector import *
 from obj import *
