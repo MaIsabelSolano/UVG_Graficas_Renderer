@@ -1,23 +1,30 @@
 from gl import *
 from vector import *
 from obj import *
+from textures import *
 
-r = Render(1440,1440,'hatsune.bmp')
+r = Render(2000, 2000,'Paimon.bmp')
 
-r.glViewPort(1440, 1440)
-r.glClearColor(BLACK)
-r.glClear()
+# r.glViewPort(1440, 1440)
+# r.glClearColor(BLACK)
+# r.glClear()
 
-"""
-Hatsune = Obj('miku_lp.obj')
-scale_factor = (800, 800, 800)
-trans = (720, 100, 0)
-#"""
-#"""
-Hatsune = Obj('miku.obj')
-scale_factor = (50, 50, 50)
-trans = (720, 100, 00)
-#"""
+Paimon = Obj('Paimon.obj')
 
-r.load_model_color(Hatsune, scale_factor, trans)
+# Texturas a utilizar
+t1 = Texture('Paimon_1.bmp')
+t2 = Texture('Paimon_6.bmp')
+t3 = Texture('Paimon_6.bmp')
+t4 = Texture('Paimon_2.bmp')
+t5 = Texture('Paimon_3.bmp')
+t6 = Texture('Paimon_4.bmp')
+t7 = Texture('Paimon_5.bmp')
+
+texturas = [t1, t2, t3, t4, t5, t6]
+
+scale_factor = (180, 180, 180)
+trans = (1000, 10, 00)
+
+r.load_model_color(Paimon, scale_factor, trans, t1)
+
 

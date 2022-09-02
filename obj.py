@@ -5,12 +5,22 @@ class Obj(object):
         
         self.vertices = []
         self.faces = []
+        self.tvertices = []
 
         for line in self.lines:
             prefix, values = line.split(' ', 1)
 
             if (prefix == 'v'): #cambiar a un for
                 self.vertices.append(
+                    list(
+                        map(
+                            float, values.split(' ')
+                        )
+                    )
+                )
+
+            if (prefix == 'vt'): #cambiar a un for
+                self.tvertices.append(
                     list(
                         map(
                             float, values.split(' ')

@@ -404,7 +404,7 @@ class Render(object):
     B:V3
     C:V3
     """
-    def triangle_vector(self, A, B, C):  
+    def triangle_vector_gray(self, A, B, C):  
 
         Light = V3(0, 0.5, 1)
         Norm = (B - A) * (C - A)
@@ -428,19 +428,48 @@ class Render(object):
                     """"""
                     continue
 
-                """
-                self.current_color = color(
-                    round(Acolor[0] * w + Bcolor[0] * v + Ccolor[0] * u), 
-                    round(Acolor[1] * w + Bcolor[1] * v + Ccolor[1] * u), 
-                    round(Acolor[2] * w + Bcolor[2] * v + Ccolor[2] * u), 
-                )
-                #"""
-
                 z = A.z * w + B.z * u + C.z * v
 
                 if (self.zBuffer[x][y] < z  ):
                     self.zBuffer[x][y] = z
                     self.point(x, y)
+
+    """
+
+    """
+    def triangle_vector_color(self, A, B, C, texture, tcoords):
+
+        Light = V3(0, 0.5, 1)
+        Norm = (B - A) * (C - A)
+        intensity = Norm.normalize() @ Light.normalize() 
+
+        if (intensity < 0):
+            # return
+            intensity = abs(intensity)
+
+        box_min, box_max = self.bounding_box(A, B, C)
+        for x in range(round(box_min.x), round(box_max.x) + 1):
+            for y in range(round(box_min.y), round(box_max.y) + 1):
+                w, v, u = self.barycentric(A, B, C, V3(x, y))
+
+                if (w < 0 or v < 0 or u < 0):
+                    """"""
+                    continue
+
+                if texture:
+                    vt1, vt2, vt3 = tcoords
+                    tx = vt1.x * w + vt2.x * v + vt3.x * u
+                    ty = vt1.y * w + vt2.y * v + vt3.y * u
+
+                    color = texture.get_color_with_intensity(tx, ty, intensity)
+
+                z = A.z * w + B.z * u + C.z * v
+
+                if (self.zBuffer[x][y] < z and x < len(self.zBuffer) and y < len(self.zBuffer[x]) ):
+                    self.zBuffer[x][y] = z
+                    self.current_color = color
+                    self.point(x, y)
+
 
     """
     bounding_box:(V3, V3)
@@ -619,7 +648,7 @@ class Render(object):
     scale_factor:(int, int) Escala en x y y para agrandar y achiquitar el objeto
     transformation:int Pixeles en x y y de cuánto se desea mover el objeto en la pantalla
     """
-    def load_model_color(self, modelo_objeto, scale_factor, transformation):
+    def load_model_color(self, modelo_objeto, scale_factor, transformation, texture=None):
         o = modelo_objeto
 
         for face in o.faces:
@@ -633,8 +662,22 @@ class Render(object):
                 v2 = transform_vertex(o.vertices[f2], transformation, scale_factor)
                 v3 = transform_vertex(o.vertices[f3], transformation, scale_factor)
 
-                # generar triángulo
-                self.triangle_vector(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]))
+                if not texture:
+                    # generar triángulo
+                    self.triangle_vector(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]))
+
+                else:
+                    ft1 = face[0][1] -1
+                    ft2 = face[1][1] -1
+                    ft3 = face[2][1] -1
+
+                    vt1 = V3(*o.tvertices[ft1])
+                    vt2 = V3(*o.tvertices[ft2])
+                    vt3 = V3(*o.tvertices[ft3])
+
+                    # Generar triángulo con textura
+                    self.triangle_vector_color(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]), texture, (vt1, vt2, vt3))
+
 
             if (len(face) == 4):
                 f1 = face[0][0] -1
@@ -647,9 +690,28 @@ class Render(object):
                 v3 = transform_vertex(o.vertices[f3], transformation, scale_factor)
                 v4 = transform_vertex(o.vertices[f4], transformation, scale_factor)
 
-                # Generar triángulos
-                self.triangle_vector(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]))
-                self.triangle_vector(V3(v1[0], v1[1], v1[2]), V3(v3[0], v3[1], v3[2]), V3(v4[0], v4[1], v4[2]))
+
+                if not texture:
+                    # Generar triángulos grises
+                    self.triangle_vector_gray(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]))
+                    self.triangle_vector_gray(V3(v1[0], v1[1], v1[2]), V3(v3[0], v3[1], v3[2]), V3(v4[0], v4[1], v4[2]))
+
+                else:
+                    # Generar triánglos con textura
+                    ft1 = face[0][1] -1
+                    ft2 = face[1][1] -1
+                    ft3 = face[2][1] -1
+                    ft4 = face[3][1] -1
+
+                    vt1 = V3(*o.tvertices[ft1])
+                    vt2 = V3(*o.tvertices[ft2])
+                    vt3 = V3(*o.tvertices[ft3])
+                    vt4 = V3(*o.tvertices[ft4])
+
+                    # Generar triángulo con textura
+                    self.triangle_vector_color(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]), texture, (vt1, vt2, vt3))
+                    self.triangle_vector_color(V3(v1[0], v1[1], v1[2]), V3(v3[0], v3[1], v3[2]), V3(v4[0], v4[1], v4[2]), V3(*v4), texture, (vt1, vt3, vt4))
+
 
         self.glFinish()
 
