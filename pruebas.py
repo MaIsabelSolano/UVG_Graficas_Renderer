@@ -11,12 +11,6 @@ r = Render(2000, 2000,'Paimon.bmp')
 
 Paimon = Obj('Paimon.obj')
 
-"""
-for x in Paimon.tvertices:
-    print(x)
-
-#"""
-
 # Texturas a utilizar
 #"""
 t1 = Texture('Paimon_1.bmp') # cara
@@ -25,7 +19,6 @@ t3 = Texture('Paimon_3.bmp') # Ropa
 t4 = Texture('Paimon_4.bmp') # Capa
 t5 = Texture('Paimon_5.bmp') # Otros
 
-texturas = [t1, t2, t1, t1, t3, t2, t4, t1]
 """
 orden
 1. Ojos y Pestañas (blanco) t1
@@ -37,6 +30,7 @@ orden
 7. Capa t4
 8. ??
 """ 
+texturas = [t1, t2, t1, t1, t3, t2, t4, t1]
 
 scale_factor = (180, 180, 180)
 trans = (1000, 10, 00)
