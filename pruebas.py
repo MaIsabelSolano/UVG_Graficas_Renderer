@@ -37,7 +37,6 @@ orden
 7. Capa t4
 8. ??
 """ 
-#"""
 
 scale_factor = (180, 180, 180)
 trans = (1000, 10, 00)

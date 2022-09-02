@@ -397,7 +397,9 @@ class Render(object):
                 threshold += dx * 2
 
     """
-    triangle_vector: Genera un triángulo coloreado dado 3 vectores.
+    triangle_vector:Void
+    
+    Genera un triángulo coloreado dado 3 vectores.
 
     Parámetros:
     A:V3
@@ -435,7 +437,16 @@ class Render(object):
                     self.point(x, y)
 
     """
+    triangle_vector_color:Void
 
+    Genera triángulos coloreados a partir de una textura brindada y 3 vectores
+
+    Parámetros:
+    A:V3
+    B:V3
+    C:V3
+    texture:Texture
+    tcoords:(int, int, int)
     """
     def triangle_vector_color(self, A, B, C, texture, tcoords):
 
@@ -678,6 +689,7 @@ class Render(object):
                     vt2 = V3(o.tvertices[ft2][0], o.tvertices[ft2][1])
                     vt3 = V3(o.tvertices[ft3][0], o.tvertices[ft3][1])
 
+                    # Obtiene el número de la textura a utilizar
                     num_texture = o.tvertices[ft1][2]
 
                     # Generar triángulo con textura
@@ -713,11 +725,14 @@ class Render(object):
                     vt3 = V3(o.tvertices[ft3][0], o.tvertices[ft3][1])
                     vt4 = V3(o.tvertices[ft4][0], o.tvertices[ft4][1])
 
+                    # Obtiene el número de la textura a utilizar
+                    num_texture = o.tvertices[ft1][2]
+
                     # Generar triángulo con textura
-                    self.triangle_vector_color(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]), texture, (vt1, vt2, vt3))
-                    self.triangle_vector_color(V3(v1[0], v1[1], v1[2]), V3(v3[0], v3[1], v3[2]), V3(v4[0], v4[1], v4[2]), V3(*v4), texture, (vt1, vt3, vt4))
+                    self.triangle_vector_color(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]), texture[num_texture], (vt1, vt2, vt3))
+                    self.triangle_vector_color(V3(v1[0], v1[1], v1[2]), V3(v3[0], v3[1], v3[2]), V3(v4[0], v4[1], v4[2]), V3(*v4), texture[num_texture], (vt1, vt3, vt4))
 
-
+        # Renderizar modelo terminado
         self.glFinish()
 
     

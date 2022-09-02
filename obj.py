@@ -7,7 +7,7 @@ class Obj(object):
         self.faces = []
         self.tvertices = []
 
-        tvertices_temp = []
+        # Variables utilizadas para determinar grupos de vértices de textura
         cant_vt = 0
         add = False
 
@@ -23,28 +23,25 @@ class Obj(object):
                     )
                 )
 
-                # A
-                """
-                if add:
-                    self.tvertices.append(tvertices_temp)
-                    tvertices_temp = []
-                    add = False 
-                """
+                # Pequeño if que permite determinar cuántos conjuntos de vt's hay
                 if add:
                     cant_vt += 1
                     add = False
 
-            if (prefix == 'vt'): #cambiar a un for
+            if (prefix == 'vt'): 
+                # Se añaden los valores a una lista temporal
                 temp = list(
                     map(
                         float, values.split(' ')
                     )
                 )
-
+                # A la lista temporal se le añade el número de agrupación de vt's
                 temp.append(cant_vt) 
                 
+                # Se añade la lista temporal a la lista de vértices de textura 
                 self.tvertices.append(temp)
                 
+                # Indica que se está en un grupo de vértices de textura
                 add = True
 
             if (prefix == 'f'):
@@ -52,13 +49,7 @@ class Obj(object):
                     list(map(int,face.split('/'))) for face in values.split(' ')
                 ])
 
-                # A
-                """
-                if add:
-                    self.tvertices.append(tvertices_temp)
-                    tvertices_temp = []
-                    add = False 
-                """
+                # Pequeño if que permite determinar cuántos conjuntos de vt's hay
                 if add:
                     cant_vt += 1
                     add = False
