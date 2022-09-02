@@ -7,6 +7,10 @@ class Obj(object):
         self.faces = []
         self.tvertices = []
 
+        tvertices_temp = []
+        cant_vt = 0
+        add = False
+
         for line in self.lines:
             prefix, values = line.split(' ', 1)
 
@@ -19,19 +23,45 @@ class Obj(object):
                     )
                 )
 
+                # A
+                """
+                if add:
+                    self.tvertices.append(tvertices_temp)
+                    tvertices_temp = []
+                    add = False 
+                """
+                if add:
+                    cant_vt += 1
+                    add = False
+
             if (prefix == 'vt'): #cambiar a un for
-                self.tvertices.append(
-                    list(
-                        map(
-                            float, values.split(' ')
-                        )
+                temp = list(
+                    map(
+                        float, values.split(' ')
                     )
                 )
+
+                temp.append(cant_vt) 
+                
+                self.tvertices.append(temp)
+                
+                add = True
 
             if (prefix == 'f'):
                 self.faces.append([
                     list(map(int,face.split('/'))) for face in values.split(' ')
                 ])
+
+                # A
+                """
+                if add:
+                    self.tvertices.append(tvertices_temp)
+                    tvertices_temp = []
+                    add = False 
+                """
+                if add:
+                    cant_vt += 1
+                    add = False
 
 
          

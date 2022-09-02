@@ -452,14 +452,17 @@ class Render(object):
             for y in range(round(box_min.y), round(box_max.y) + 1):
                 w, v, u = self.barycentric(A, B, C, V3(x, y))
 
+                color = (0, 0, 0)
+
                 if (w < 0 or v < 0 or u < 0):
                     """"""
                     continue
 
                 if texture:
                     vt1, vt2, vt3 = tcoords
-                    tx = vt1.x * w + vt2.x * v + vt3.x * u
-                    ty = vt1.y * w + vt2.y * v + vt3.y * u
+
+                    tx = vt1.x * w + vt2.x * u + vt3.x * v
+                    ty = vt1.y * w + vt2.y * u + vt3.y * v
 
                     color = texture.get_color_with_intensity(tx, ty, intensity)
 
@@ -664,19 +667,21 @@ class Render(object):
 
                 if not texture:
                     # generar triángulo
-                    self.triangle_vector(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]))
+                    self.triangle_vector_gray(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]))
 
                 else:
                     ft1 = face[0][1] -1
                     ft2 = face[1][1] -1
                     ft3 = face[2][1] -1
 
-                    vt1 = V3(*o.tvertices[ft1])
-                    vt2 = V3(*o.tvertices[ft2])
-                    vt3 = V3(*o.tvertices[ft3])
+                    vt1 = V3(o.tvertices[ft1][0], o.tvertices[ft1][1])
+                    vt2 = V3(o.tvertices[ft2][0], o.tvertices[ft2][1])
+                    vt3 = V3(o.tvertices[ft3][0], o.tvertices[ft3][1])
+
+                    num_texture = o.tvertices[ft1][2]
 
                     # Generar triángulo con textura
-                    self.triangle_vector_color(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]), texture, (vt1, vt2, vt3))
+                    self.triangle_vector_color(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]), texture[num_texture], (vt1, vt2, vt3))
 
 
             if (len(face) == 4):
@@ -703,10 +708,10 @@ class Render(object):
                     ft3 = face[2][1] -1
                     ft4 = face[3][1] -1
 
-                    vt1 = V3(*o.tvertices[ft1])
-                    vt2 = V3(*o.tvertices[ft2])
-                    vt3 = V3(*o.tvertices[ft3])
-                    vt4 = V3(*o.tvertices[ft4])
+                    vt1 = V3(o.tvertices[ft1][0], o.tvertices[ft1][1])
+                    vt2 = V3(o.tvertices[ft2][0], o.tvertices[ft2][1])
+                    vt3 = V3(o.tvertices[ft3][0], o.tvertices[ft3][1])
+                    vt4 = V3(o.tvertices[ft4][0], o.tvertices[ft4][1])
 
                     # Generar triángulo con textura
                     self.triangle_vector_color(V3(v1[0], v1[1], v1[2]), V3(v2[0], v2[1], v2[2]), V3(v3[0], v3[1], v3[2]), texture, (vt1, vt2, vt3))
