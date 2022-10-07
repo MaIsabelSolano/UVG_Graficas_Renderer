@@ -1,3 +1,47 @@
+class V4(object):
+    def __init__(self, x, y ,z = 0, w = 0):
+        self.x = x
+        self.y = y
+        self.z = z 
+        self.w = w
+
+    def __add__(self, other):
+        return V4(
+            self.x + other.x, 
+            self.y + other.y,
+            self.z + other.z,
+            self.w + other.w
+        )
+
+    def __sub__(self, other):
+        return V4(
+            self.x - other.x, 
+            self.y - other.y,
+            self.z - other.z,
+            self.w - other.w
+        )
+
+    def __mul__(self, other):
+        if (type(other) == int or type(other) == float):
+            return V3(
+                self.x * other,
+                self.y * other,
+                self.z * other,
+                self.w * other
+            )
+
+    def __matmul__(self, other):
+        return self.x * other.x + self.y * other.y + self.z * other.z + self.w + other.w
+
+    def length(self):
+        return ((self.x)**2 + (self.y)**2 + (self.z)**2 + (self.w)**2)**0.5
+
+    def normalize(self): #mod
+        return self * (1/self.length())
+
+    def __repr__(self):
+        return "V4(%s, %s, %s, %s)" % (self.x, self.y, self.z, self.w)
+
 class V3(object):
     def __init__(self, x, y ,z = 0):
         self.x = x
