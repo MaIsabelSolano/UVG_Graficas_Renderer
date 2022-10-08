@@ -1,6 +1,8 @@
 import struct 
 from vector import *
+from matrices import *
 from obj import *
+from math import *
 
 """ Estructuras necesarias para crear un archivo BMP """
 
@@ -31,12 +33,7 @@ ORANGE = color( 200, 100, 0)
 BLUE = color(0, 0, 255)
 GREEN = color(0, 255, 0)
 
-def transform_vertex(v, translate, scale):
-    return [
-        (v[0] * scale[0]) + translate[0],
-        (v[1] * scale[1]) + translate[1], 
-        (v[2] * scale[2]) + translate[2]
-    ]
+
 
 """ Clase Render: Produce la imagen BMP"""
 class Render(object):
@@ -50,6 +47,7 @@ class Render(object):
         self.height = h
         self.width_vp = w
         self.height_vp = h
+        self.ModelM = None
 
         self.current_color = WHITE
         self.clear_color = BLACK
@@ -206,7 +204,7 @@ class Render(object):
     """
     def point(self, x, y):
         # pinta un color utilizando un puntero
-        if (0 <= y < self.width and 0 <= y < self.height ):
+        if (0 <= x < self.width and 0 <= y < self.height ):
             self.framebuffer[y][x] = self.current_color
 
     """
@@ -224,6 +222,68 @@ class Render(object):
 
       # pinta un color utilizando un puntero
       self.framebuffer[posy][posx] = self.current_color
+
+    """
+    """
+    def loadModelMatrix(self, translante = (0, 0, 0), scale = (0, 0, 0), rotate = (0, 0, 0)):
+
+        translante = V3(*translante)
+        scale = V3(*scale)
+        rotate = V3(*rotate)
+
+        translationMatrix = M4([
+            [1, 0, 0, translante.x],
+            [0, 1, 0, translante.y],
+            [0, 0, 1, translante.z],
+            [0, 0, 0, 1]
+        ])
+
+        # rotación
+
+        a = rotate.x
+        rotation_x = M4([
+            [1,      0,       0, 0],
+            [0, cos(a), -sin(a), 0],
+            [0, sin(a),  cos(a), 0],
+            [0,      0,       0, 1]
+        ])
+
+        b = rotate.y
+        rotation_y = M4([
+            [ cos(b), 0, sin(b), 0],
+            [      0, 1,      0, 0],
+            [-sin(b), 0, cos(b), 0],
+            [      0, 0,      0, 1]
+        ])
+
+        c = rotate.z
+        rotation_z = M4([
+            [cos(c), -sin(c), 0, 0],
+            [sin(c),  cos(c), 0, 0],
+            [     0,       0, 1, 0],
+            [     0,       0, 0, 1]
+        ])
+
+        rotationMatrix = rotation_x * rotation_y * rotation_z
+
+        scaleMatrix = M4([
+            [scale.x, 0, 0, 0],
+            [0, scale.y, 0, 0],
+            [0, 0, scale.z, 0],
+            [0, 0, 0,       1]
+        ])
+
+        self.ModelM = translationMatrix * rotationMatrix * scaleMatrix
+
+    """
+    """
+    def transform_vertex(self, v):
+
+        aumented_vertex = V4(v.x, v.y, v.z)
+
+        temp = self.ModelM * aumented_vertex
+
+        return (temp.x, temp.y, temp.z)
 
     """
     line:Void
@@ -479,10 +539,11 @@ class Render(object):
 
                 z = A.z * w + B.z * u + C.z * v
 
-                if (self.zBuffer[x][y] < z and x < len(self.zBuffer) and y < len(self.zBuffer[x]) ):
-                    self.zBuffer[x][y] = z
-                    self.current_color = color
-                    self.point(x, y)
+                if (x < len(self.zBuffer) and y < len(self.zBuffer[x])):
+                    if (self.zBuffer[x][y] < z ):
+                        self.zBuffer[x][y] = z
+                        self.current_color = color
+                        self.point(x, y)
 
 
     """
@@ -623,9 +684,9 @@ class Render(object):
                 f2 = face[1][0] -1
                 f3 = face[2][0] -1
 
-                v1 = transform_vertex(o.vertices[f1], transformation, scale_factor)
-                v2 = transform_vertex(o.vertices[f2], transformation, scale_factor)
-                v3 = transform_vertex(o.vertices[f3], transformation, scale_factor)
+                v1 = self.transform_vertex(o.vertices[f1])
+                v2 = self.transform_vertex(o.vertices[f2])
+                v3 = self.transform_vertex(o.vertices[f3])
 
                 # generar triángulo
                 self.line_vector(V3(v1[0], v1[1]), V3(v2[0], v2[1]))
@@ -638,10 +699,10 @@ class Render(object):
                 f3 = face[2][0] -1
                 f4 = face[3][0] -1
 
-                v1 = transform_vertex(o.vertices[f1], transformation, scale_factor)
-                v2 = transform_vertex(o.vertices[f2], transformation, scale_factor)
-                v3 = transform_vertex(o.vertices[f3], transformation, scale_factor)
-                v4 = transform_vertex(o.vertices[f4], transformation, scale_factor)
+                v1 = self.transform_vertex(o.vertices[f1])
+                v2 = self.transform_vertex(o.vertices[f2])
+                v3 = self.transform_vertex(o.vertices[f3])
+                v4 = self.transform_vertex(o.vertices[f4])
 
                 # generar las líneas
                 self.line_vector(V3(v1[0], v1[1]), V3(v2[0], v2[1]))
@@ -662,7 +723,16 @@ class Render(object):
     scale_factor:(int, int) Escala en x y y para agrandar y achiquitar el objeto
     transformation:int Pixeles en x y y de cuánto se desea mover el objeto en la pantalla
     """
-    def load_model_color(self, modelo_objeto, scale_factor, transformation, texture=None):
+    def load_model_color(
+        self, modelo_objeto, 
+        scale_factor = (1, 1, 1), 
+        transformation =(0, 0, 0), 
+        rotation = (0,0,0), 
+        texture = None
+        ):
+
+        self.loadModelMatrix(transformation, scale_factor, rotation)
+
         o = modelo_objeto
 
         for face in o.faces:
@@ -672,9 +742,9 @@ class Render(object):
                 f2 = face[1][0] -1
                 f3 = face[2][0] -1
 
-                v1 = transform_vertex(o.vertices[f1], transformation, scale_factor)
-                v2 = transform_vertex(o.vertices[f2], transformation, scale_factor)
-                v3 = transform_vertex(o.vertices[f3], transformation, scale_factor)
+                v1 = self.transform_vertex(V3(*o.vertices[f1]))
+                v2 = self.transform_vertex(V3(*o.vertices[f2]))
+                v3 = self.transform_vertex(V3(*o.vertices[f3]))
 
                 if not texture:
                     # generar triángulo
@@ -702,10 +772,10 @@ class Render(object):
                 f3 = face[2][0] -1
                 f4 = face[3][0] -1
 
-                v1 = transform_vertex(o.vertices[f1], transformation, scale_factor)
-                v2 = transform_vertex(o.vertices[f2], transformation, scale_factor)
-                v3 = transform_vertex(o.vertices[f3], transformation, scale_factor)
-                v4 = transform_vertex(o.vertices[f4], transformation, scale_factor)
+                v1 = self.transform_vertex(V3(*o.vertices[f1]))
+                v2 = self.transform_vertex(V3(*o.vertices[f2]))
+                v3 = self.transform_vertex(V3(*o.vertices[f3]))
+                v4 = self.transform_vertex(V3(*o.vertices[f4]))
 
 
                 if not texture:

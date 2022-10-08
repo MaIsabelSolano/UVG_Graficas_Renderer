@@ -3,6 +3,7 @@ from vector import *
 from obj import *
 from textures import *
 from matrices import *
+from math import *
 
 r = Render(2000, 2000,'Paimon.bmp')
 
@@ -35,6 +36,6 @@ texturas = [t1, t2, t1, t1, t3, t2, t4, t1]
 
 scale_factor = (180, 180, 180)
 trans = (1000, 10, 00)
+rotation = (0, pi, 0)
 
-r.load_model_color(Paimon, scale_factor, trans, texturas)
-
+r.load_model_color(Paimon, scale_factor, trans, rotation, texturas)
