@@ -224,6 +224,14 @@ class Render(object):
       self.framebuffer[posy][posx] = self.current_color
 
     """
+    loadModelMatrix:Void
+
+    Con los valores brindados, generera la matriz de transforamciones
+
+    translante:(int, int, int) Modificación de posiciones en x, y , z
+    scale:(int, int, int) Modificación de escala en x, y, z
+    rotation:(rad, rad, rad) Modificiación de rotación en x, y, z
+
     """
     def loadModelMatrix(self, translante = (0, 0, 0), scale = (0, 0, 0), rotate = (0, 0, 0)):
 
@@ -276,6 +284,12 @@ class Render(object):
         self.ModelM = translationMatrix * rotationMatrix * scaleMatrix
 
     """
+    transform_vertex: (float, float, float)
+
+    Utilizando la matriz de transformación, aplica las transformaciones al vértice brindado
+
+    v:V3
+
     """
     def transform_vertex(self, v):
 
