@@ -1,0 +1,9 @@
+# Types of files to ignore if not especifically indicated
+#  otherwhise
+*.bmp
+*.mlt
+*.glb
+
+# Folders to ignore
+/.vscode
+/__pycache__
