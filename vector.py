@@ -84,7 +84,10 @@ class V3(object):
         return ((self.x)**2 + (self.y)**2 + (self.z)**2)**0.5
 
     def normalize(self): #mod
-        return self * (1/self.length())
+        if (self.length() != 0):
+            return self * (1/self.length())
+        else:
+            return self
 
     def __repr__(self):
         return "V3(%s, %s, %s)" % (self.x, self.y, self.z)

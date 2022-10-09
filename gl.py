@@ -1,4 +1,4 @@
-import struct 
+import struct
 from vector import *
 from matrices import *
 from obj import *
@@ -48,6 +48,7 @@ class Render(object):
         self.width_vp = w
         self.height_vp = h
         self.ModelM = None
+        self.View = None
 
         self.current_color = WHITE
         self.clear_color = BLACK
@@ -71,7 +72,7 @@ class Render(object):
             for y in range(self.height)
         ]
         self.zBuffer = [
-            [-99999999 for x in range(self.width)]
+            [-9999999999 for x in range(self.width)]
             for y in range(self.height)
         ]
         
@@ -233,12 +234,13 @@ class Render(object):
     rotation:(rad, rad, rad) Modificiación de rotación en x, y, z
 
     """
-    def loadModelMatrix(self, translante = (0, 0, 0), scale = (0, 0, 0), rotate = (0, 0, 0)):
+    def loadModelMatrix(self, translante = (0, 0, 0), scale = (1, 1, 1), rotate = (0, 0, 0)):
 
         translante = V3(*translante)
         scale = V3(*scale)
         rotate = V3(*rotate)
 
+        # Traslación
         translationMatrix = M4([
             [1, 0, 0, translante.x],
             [0, 1, 0, translante.y],
@@ -246,8 +248,15 @@ class Render(object):
             [0, 0, 0, 1]
         ])
 
-        # rotación
+        # Escala
+        scaleMatrix = M4([
+            [scale.x, 0, 0, 0],
+            [0, scale.y, 0, 0],
+            [0, 0, scale.z, 0],
+            [      0, 0, 0, 1]
+        ])
 
+        # rotación
         a = rotate.x
         rotation_x = M4([
             [1,      0,       0, 0],
@@ -274,13 +283,7 @@ class Render(object):
 
         rotationMatrix = rotation_x * rotation_y * rotation_z
 
-        scaleMatrix = M4([
-            [scale.x, 0, 0, 0],
-            [0, scale.y, 0, 0],
-            [0, 0, scale.z, 0],
-            [0, 0, 0,       1]
-        ])
-
+        # Generación de matriz de transformaciones
         self.ModelM = translationMatrix * rotationMatrix * scaleMatrix
 
     """
@@ -293,11 +296,34 @@ class Render(object):
     """
     def transform_vertex(self, v):
 
+        # V3 -> V4 // Para poder ser multiplicado con matrices de 4x4
         aumented_vertex = V4(v.x, v.y, v.z)
 
-        temp = self.ModelM * aumented_vertex
+        # Multiplicación de matrices con el Vector en el orden correspondiente
+        if (self.View and self.Projection and self.Viewport):
+            temp = self.ModelM     * aumented_vertex
+            temp = self.View       * temp
+            temp = self.Projection * temp
+            # temp = self.Viewport   * temp (no en uso temporalmente)
 
-        return (temp.x, temp.y, temp.z)
+        # Si no se utliza la función lookAt, se hace una transformación
+        # Simple de los vértices
+        else:
+            temp = self.ModelM * aumented_vertex
+
+        # V4 -> V3
+        # return (
+        #     temp.x / temp.w, 
+        #     temp.y / temp.w, 
+        #     temp.z / temp.w
+        #     )
+
+        # V4 -> V3
+        return (
+            temp.x, 
+            temp.y, 
+            temp.z
+            )
 
     """
     line:Void
@@ -306,6 +332,7 @@ class Render(object):
 
     i:(int, int) Punto inicial
     f:(int, int) Punto final
+
     """
     def line (self, i, f):
 
@@ -365,6 +392,7 @@ class Render(object):
     Parámetros:
     i:(int, int) Vector Punto inicial
     f:(int, int) Vector Punto final
+
     """
     def line_vector (self, i, f):
 
@@ -420,6 +448,7 @@ class Render(object):
     Parámetros:
     i:(int, int) Punto inicial
     f:(int, int) Punto final
+
     """
     def line_vertex(self, i, f):
         # puntos inicial y final
@@ -479,6 +508,7 @@ class Render(object):
     A:V3
     B:V3
     C:V3
+
     """
     def triangle_vector_gray(self, A, B, C):  
 
@@ -521,6 +551,7 @@ class Render(object):
     C:V3
     texture:Texture
     tcoords:(int, int, int)
+
     """
     def triangle_vector_color(self, A, B, C, texture, tcoords):
 
@@ -543,20 +574,20 @@ class Render(object):
                     """"""
                     continue
 
-                if texture:
-                    vt1, vt2, vt3 = tcoords
-
-                    tx = vt1.x * w + vt2.x * u + vt3.x * v
-                    ty = vt1.y * w + vt2.y * u + vt3.y * v
-
-                    color = texture.get_color_with_intensity(tx, ty, intensity)
-
                 z = A.z * w + B.z * u + C.z * v
 
-                if (x < len(self.zBuffer) and y < len(self.zBuffer[x])):
-                    if (self.zBuffer[x][y] < z ):
-                        self.zBuffer[x][y] = z
-                        self.current_color = color
+                if (0 < x < len(self.zBuffer) and 0 < y < len(self.zBuffer[0])):
+                    if (self.zBuffer[x][y] < z):
+                        self.zBuffer[x][y] = z 
+
+                        if texture:
+                            vt1, vt2, vt3 = tcoords
+
+                            tx = vt1.x * w + vt2.x * u + vt3.x * v
+                            ty = vt1.y * w + vt2.y * u + vt3.y * v
+
+                            self.current_color = texture.get_color_with_intensity(tx, ty, intensity)
+
                         self.point(x, y)
 
 
@@ -569,6 +600,7 @@ class Render(object):
     v1:V3
     v2:V3
     v3:V3
+
     """
     def bounding_box(self, v1, v2, v3):
         cordenadas = [(v1.x, v1.y), (v2.x, v2.y), (v3.x, v3.y)]
@@ -600,6 +632,7 @@ class Render(object):
     B:V3
     C:V3
     P:V3
+
     """
     def barycentric(self, A, B, C, P):
 
@@ -631,6 +664,7 @@ class Render(object):
     p2:(int, int) Punto final de la línea
     c:(int, int) Punto desde donde se generan líneas hacia la línea que se genera
       entre p1 y p2
+    
     """
     def fillTriangle_center(self, p1, p2, c):
         # puntos inicial y final
@@ -687,6 +721,7 @@ class Render(object):
     modelo_objeto:Obj Modelo 3D que se desea generar
     scale_factor:(int, int) Escala en x y y para agrandar y achiquitar el objeto
     transformation:int Pixeles en x y y de cuánto se desea mover el objeto en la pantalla
+
     """
     def load_model_wire(self, modelo_objeto, scale_factor, transformation):
         o = modelo_objeto
@@ -736,6 +771,7 @@ class Render(object):
     modelo_objeto:Obj Modelo 3D que se desea generar
     scale_factor:(int, int) Escala en x y y para agrandar y achiquitar el objeto
     transformation:int Pixeles en x y y de cuánto se desea mover el objeto en la pantalla
+    
     """
     def load_model_color(
         self, modelo_objeto, 
@@ -819,4 +855,87 @@ class Render(object):
         # Renderizar modelo terminado
         self.glFinish()
 
+    """
+    loadViewMatrix:Void
+
+    Genera la matriz de vista para deformar los vértices
     
+    x:V3
+    y:V3
+    z:V3
+    center:V3
+
+    """
+    def loadViewMatrix(self, x, y, z, center):
+        Mi = M4([
+            [x.x, x.y, x.z, 0],
+            [y.x, y.y, y.z, 0],
+            [z.x, z.y, z.z, 0],
+            [  0,   0,   0, 1]
+        ])
+
+        Op = M4([
+            [1, 0, 0, -center.x],
+            [0, 1, 0, -center.y],
+            [0, 0, 1, -center.z],
+            [0, 0, 0,         1]
+        ])
+
+        self.View = Mi * Op
+
+    """
+    loadProjectionMatrix:Void
+
+    Genera la matriz de proyección de perspectiva
+
+    coeff:float Coeficiente con el que se genera la perspectiva el
+     cuál depende de la cámara y dónde se encuentran los objetos
+    
+    """
+    def loadProjectionMatrix(self, coeff):
+        self.Projection = M4([
+            [1, 0, 0, 0], 
+            [0, 1, 0, 0], 
+            [0, 0, 1, 0], 
+            [0, 0, coeff, 1] 
+        ])
+
+    """
+    loadViewPortMatrix:Void
+
+    Genera la matriz para que los objetos queden dentro del viewport
+    """
+    def loadViewportMatrix(self, x = 0, y = 0):
+        x = 0
+        y = 0
+        w = self.width/2
+        h = self.height/2
+
+        self.Viewport = M4([
+            [w, 0,   0, x + w], 
+            [0, h,   0, y + h], 
+            [0, 0, 128,   128], 
+            [0, 0,   0,     1] 
+        ])
+
+    """
+    lookAt:Void
+
+    Llama a las funciones para generar las matrices de proyección
+    y del viewport
+
+    eye:V3
+    center:V3
+    up:V3
+
+    """
+    def lookAt(self, eye, center, up):
+        # Cálculo de variables
+        z = (eye - center).normalize()
+        x = (up * z).normalize()
+        y = (z * x).normalize()
+
+        # Generación de las otras matrices
+        self.loadViewMatrix(x, y, z, center)
+        self.loadProjectionMatrix((-1 / (eye - center).length()))
+        self.loadViewportMatrix()
