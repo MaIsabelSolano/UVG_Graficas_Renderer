@@ -49,7 +49,7 @@ class Texture(object):
     tx:float
     ty:float 
     """
-    def get_color_with_intensity(self, tx, ty, intensidad):
+    def get_color_with_intensity(self, tx, ty, intensidad = 1):
         x = round(tx * self.width)
         y = round(ty * self.height)
         

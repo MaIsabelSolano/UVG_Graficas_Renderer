@@ -5,12 +5,18 @@ from textures import *
 from matrices import *
 from math import *
 
-r = Render(500, 500,'Paimon_da.bmp')
+r = Render(2000, 2000,'Paimon.bmp')
 # r = Render(500, 500, 'Cajita.bmp')
 
-r.glViewPort(500, 500)
+r.glViewPort(2000, 2000)
 r.glClearColor(BLACK)
 r.glClear()
+
+# Fondo
+fondo = Texture('fondo_m.bmp')
+r.framebuffer = fondo.pixels
+
+# Objetos
 
 Paimon = Obj('Paimon.obj')
 
@@ -34,79 +40,52 @@ orden
 """ 
 texturas = [t1, t2, t1, t1, t3, t2, t4, t1]
 
-"""
-Transformaciones
+# t1 = Texture('caja_text.bmp')
+# texturas = [t1, t1, t1, t1, t1, t1, t1]
 
-Modo de uso: Descomentar cada grupo de código para poder 
-obtener las transformaciones subidas a canvas
+scale_factor = (40, 40, 40)
+trans = (1000, 400, 50)
+rotation = (0, 0, 0)
+r.lookAt(V3(0, 0, 10), V3(0, 0, 0), V3(0, 1, 0))
 
-Tip: Utilizar comandos "ctr + k + c" y "ctr + k + u" para
-comentar y descomentar respectivamente
+def shader(**kwargs):
+    y = kwargs['y']
+    x = kwargs['x']
+    w, u, v = kwargs['bar']
+    A, B, C = kwargs['coords']
+    nA, nB, nC = kwargs['ncoords']
+    texture = kwargs['textures']
+    
+    Light = V3(0, 10, 5).normalize()
+    
+    iA = nA.normalize() @ Light
+    iB = nB.normalize() @ Light
+    iC = nC.normalize() @ Light
 
-"""
-# # __________________________________________________________________
-# # Transformación: High angle: front 
-# # Nombre de archivo: Paimon_ha_f.bmp
+    intensity = iA * w + iB * u + iC * v
 
-# scale_factor = (50, 50, 50)
-# trans = (250, 0, -50)
-# rotation = (0, 0, 0)
-# r.lookAt(V3(0, 15, 10), V3(0, 1, 0), V3(0, 1, 0))
-# r.load_model_color(Paimon, scale_factor, trans, rotation, texturas)
-# # __________________________________________________________________
+    if intensity < 0:
+        intensity = abs(intensity)
 
-# # __________________________________________________________________
-# # Transformación: High angle: back ()
-# # Nombre de archivo: Paimon_ha_b.bmp
+    if texture:
+        
+        vt1, vt2, vt3 = kwargs['tcoords']
 
-# scale_factor = (50, 50, 50)
-# trans = (250, 0, -50)
-# rotation = (0, pi, 0)
-# r.lookAt(V3(0, 15, 10), V3(0, 1, 0), V3(0, 1, 0))
-# r.load_model_color(Paimon, scale_factor, trans, rotation, texturas)
-# # __________________________________________________________________
+        tx = vt1.x * w + vt2.x * u + vt3.x * v
+        ty = vt1.y * w + vt2.y * u + vt3.y * v
 
-# # __________________________________________________________________
-# # Transformación: Low angle: front ()
-# # Nombre de archivo: Paimon_la_b.bmp
+        return texture.get_color_with_intensity(tx, ty)
 
-# scale_factor = (50, 50, 50)
-# trans = (250, 0, 0)
-# rotation = (0, 0, 0)
-# r.lookAt(V3(0, 0, 25), V3(0, -1, 0), V3(0, 1, 0))
-# r.load_model_color(Paimon, scale_factor, trans, rotation, texturas)
-# # __________________________________________________________________
+    # if (y < 100):
+    #     return color(255, 0, 0)
+    # elif (y < 150):
+    #     return color(255, 0, 0)
+    # elif ( y < 100):
+    #     return color(0, 0, 0)
+    # else:
+    #     return color(0, 0, 200)
 
-# # __________________________________________________________________
-# # Transformación: Low angle: back ()
-# # Nombre de archivo: Paimon_la_b.bmp
+r.active_shader = shader
 
-# scale_factor = (50, 50, 50)
-# trans = (250, 0, 0)
-# rotation = (0, pi, 0)
-# r.lookAt(V3(0, 0, 25), V3(0, -1, 0), V3(0, 1, 0))
-# r.load_model_color(Paimon, scale_factor, trans, rotation, texturas)
-# # __________________________________________________________________
-
-
-# # __________________________________________________________________
-# # Transformación: Medium shot ()
-# # Nombre de archivo: Paimon_ms.bmp
-
-# scale_factor = (90, 90, 90)
-# trans = (250, -400, 0)
-# rotation = (0, 0, 0)
-# r.lookAt(V3(0, 0, 100), V3(0, 0, 0), V3(0, 1, 0))
-# r.load_model_color(Paimon, scale_factor, trans, rotation, texturas)
-# # __________________________________________________________________
-
-# __________________________________________________________________
-# Transformación: Dutch angle ()
-# Nombre de archivo: Paimon_da.bmp
-
-scale_factor = (60, 60, 60)
-trans = (350, -350, 0)
-rotation = (0, pi/6, 0)
-r.lookAt(V3(0, -10, 100), V3(0, -0.25, 0), V3(1, 1, 0))
 r.load_model_color(Paimon, scale_factor, trans, rotation, texturas)
-# __________________________________________________________________
+

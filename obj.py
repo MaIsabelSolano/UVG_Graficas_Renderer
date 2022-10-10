@@ -6,6 +6,7 @@ class Obj(object):
         self.vertices = []
         self.faces = []
         self.tvertices = []
+        self.nvertices = []
 
         # Variables utilizadas para determinar grupos de vértices de textura
         cant_vt = 0
@@ -16,6 +17,20 @@ class Obj(object):
 
             if (prefix == 'v'): #cambiar a un for
                 self.vertices.append(
+                    list(
+                        map(
+                            float, values.split(' ')
+                        )
+                    )
+                )
+
+                # Pequeño if que permite determinar cuántos conjuntos de vt's hay
+                if add:
+                    cant_vt += 1
+                    add = False
+
+            if (prefix == 'vn'): #cambiar a un for
+                self.nvertices.append(
                     list(
                         map(
                             float, values.split(' ')
