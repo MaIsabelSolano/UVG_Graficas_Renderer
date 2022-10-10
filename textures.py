@@ -50,12 +50,25 @@ class Texture(object):
     ty:float 
     """
     def get_color_with_intensity(self, tx, ty, intensidad = 1):
+        # print(tx, ty)
+
+        if ty >= 1:
+            ty -= 1
+
         x = round(tx * self.width)
         y = round(ty * self.height)
-        
-        b = round(self.pixels[y][x][0] * intensidad)
-        g = round(self.pixels[y][x][1] * intensidad)
-        r = round(self.pixels[y][x][2] * intensidad)
 
-        return color(r, g, b)
+        p_color = color(0, 0, 0)
+
+        #print(x, y)
+        
+        if (y < len(self.pixels)):
+            if (x < len(self.pixels[y])):
+                b = round(self.pixels[y][x][0] * intensidad)
+                g = round(self.pixels[y][x][1] * intensidad)
+                r = round(self.pixels[y][x][2] * intensidad)
+
+                p_color = color(r, g, b)
+
+        return p_color
 

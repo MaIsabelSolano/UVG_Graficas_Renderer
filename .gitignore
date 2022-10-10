@@ -1,6 +1,6 @@
 # Types of files to ignore if not especifically indicated
 #  otherwhise
-*.bmp
+
 *.mlt
 *.glb
 
