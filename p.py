@@ -55,39 +55,36 @@ r.active_shader = shader
 r.lookAt(V3(0, 0, 10), V3(0, 0, 0), V3(0, 1, 0))
 
 # Objetos _______________________________________
-# Traveler
-print('Aether')
-Aether = Obj('Models/Kaeya.obj')
+# Amber
+print('Amber')
+Amber = Obj('Models/Amber.obj')
 
 # Texturas
-t1 = Texture('Models/Kaeya_1.bmp') # Pelo
-t2 = Texture('Models/Kaeya_2.bmp') # Ropa
-t3 = Texture('Models/Kaeya_3.bmp') # Cara
-t4 = Texture('Models/Kaeya_4.bmp') # Otros
+t1 = Texture('Models/Amber_1.bmp') # Cara
+t2 = Texture('Models/Amber_2.bmp') # Pelo
+t3 = Texture('Models/Amber_3.bmp') # Ropa
+t4 = Texture('Models/Amber_4.bmp') # Otros
 
 """
 Orden
-1.  ??
-2.  t2 Piel
-3.  t3 Pestañas
-4.  t3 Cara
-5.  t1 Pelo
-resto: t2 Ropa
+1.  t1 Pestañas
+2.  t1 Cara
+3.  t2 Ojos
+4.  t3 Ojos
+5.  t3 Ropa
+6.  t2 Pelo
+resto: ropa
 """
-texturas = [t1, t2, t3, t3, t1,
-            t2, t2, t2, t2, t2,
-            t2, t2, t2, t2, t2,
-            t2
-]
+texturas = [t1, t1, t2, t3, t3, t2, t3, t3]
 
-scale_factor = (50, 50, 50)
+scale_factor = (60, 60, 60)
 trans = (500, 100, 50)
 rotation = (0, pi, 0)
 
-r.load_model_color(Aether, scale_factor, trans, rotation, texturas)
+r.load_model_color(Amber, scale_factor, trans, rotation, texturas)
 
 scale_factor = (50, 50, 50)
 trans = (1500, 100, 50)
 rotation = (0, 0, 0)
 
-r.load_model_color(Aether, scale_factor, trans, rotation, texturas)
+r.load_model_color(Amber, scale_factor, trans, rotation, texturas)

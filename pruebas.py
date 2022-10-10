@@ -52,14 +52,14 @@ def shader(**kwargs):
 r.active_shader = shader
 
 # Fondo_______________________________________
-fondo = Texture('Models/fondo_m.bmp')
+fondo = Texture('Models/fondo2_m.bmp')
 r.framebuffer = fondo.pixels
 
 # Cámara _______________________________________
-r.lookAt(V3(0, 0, 10), V3(0, 0.2, 0), V3(0, 1, 0))
+r.lookAt(V3(0, 1, 5), V3(0, 0.3, 0), V3(0, 1, 0))
 
 # Objetos _______________________________________
-# Paimon
+# Paimon ..................................
 print('paimon')
 Paimon = Obj('Models/Paimon.obj')
 
@@ -83,13 +83,13 @@ orden
 """ 
 texturas = [t1, t2, t1, t1, t3, t2, t4, t1]
 
-scale_factor = (30, 30, 30)
-trans = (1000, 400, 50)
-rotation = (0, 0, 0)
+scale_factor = (40, 40, 40)
+trans = (1800, 600, -100)
+rotation = (0, -pi/4, 0)
 
 r.load_model_color(Paimon, scale_factor, trans, rotation, texturas)
 
-# Traveler
+# Traveler ..................................
 print('Aether')
 Aether = Obj('Models/Aether.obj')
 
@@ -134,13 +134,44 @@ texturas = [t3, t2, t2, t4, t2,
             t1, t1, t1, t1,
 ]
 
-scale_factor = (50, 50, 50)
-trans = (700, 100, 50)
-rotation = (0, pi, 0)
+scale_factor = (45, 45, 45)
+trans = (1500, 100, 0)
+rotation = (0, pi/8, 0)
 
 r.load_model_color(Aether, scale_factor, trans, rotation, texturas)
 
-# Kaeya
+# Jean ..................................
+print('Jean')
+Jean = Obj('Models/Jean.obj')
+
+# Texturas
+t1 = Texture('Models/Jean_1.bmp') # Cara
+t2 = Texture('Models/Jean_2.bmp') # Ropa
+t3 = Texture('Models/Jean_3.bmp') # Pelo
+t4 = Texture('Models/Jean_4.bmp') # Otros
+
+"""
+Orden
+1.  t1 Pestañas
+2.  t1 Cara
+3.  t2 Piel
+4.  t3 Ojos
+5.  t3 Pelo
+resto: ropa
+"""
+texturas = [t1, t1, t2, t3, t3,
+            t2, t2, t2, t2, t2,
+            t2, t2, t2, t2, t2
+]
+
+# scale_factor = (50, 50, 50)
+scale_factor = (40, 40, 40)
+trans = (1000, 130, -500)
+rotation = (0, 8*pi/7, 0)
+
+r.load_model_color(Jean, scale_factor, trans, rotation, texturas)
+
+# Kaeya ..................................
 print('Kaeya')
 Kaeya = Obj('Models/Kaeya.obj')
 
@@ -165,9 +196,37 @@ texturas = [t1, t2, t3, t3, t1,
             t2
 ]
 
-scale_factor = (60, 60, 60)
-trans = (1200, 100, 50)
-rotation = (0, pi, 0)
+# scale_factor = (55, 55, 55)
+scale_factor = (45, 45, 45)
+trans = (600, 100, -500)
+rotation = (0, 7*pi/6, 0)
 
 r.load_model_color(Kaeya, scale_factor, trans, rotation, texturas)
 
+# Amber ..................................
+print('Amber')
+Amber = Obj('Models/Amber.obj')
+
+# Texturas
+t1 = Texture('Models/Amber_1.bmp') # Cara
+t2 = Texture('Models/Amber_2.bmp') # Pelo
+t3 = Texture('Models/Amber_3.bmp') # Ropa
+t4 = Texture('Models/Amber_4.bmp') # Otros
+
+"""
+Orden
+1.  t1 Pestañas
+2.  t1 Cara
+3.  t2 Ojos
+4.  t3 Ojos
+5.  t3 Ropa
+6.  t2 Pelo
+resto: ropa
+"""
+texturas = [t1, t1, t2, t3, t3, t2, t3, t3]
+
+scale_factor = (48, 48, 48)
+trans = (300, 100, 100)
+rotation = (0, 11*pi/8, 0)
+
+r.load_model_color(Amber, scale_factor, trans, rotation, texturas)
