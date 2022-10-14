@@ -5,7 +5,7 @@ from textures import *
 from matrices import *
 from math import *
 
-r = Render(2000, 2000,'Scene.bmp')
+r = Render(1000, 1000,'p.bmp')
 
 r.glViewPort(2000, 2000)
 r.glClearColor(BLACK)
@@ -20,13 +20,16 @@ def shader(**kwargs):
     nA, nB, nC = kwargs['ncoords']
     texture = kwargs['textures']
     
-    Light = V3(0, 10, 5).normalize()
+    Light = V3(0, 1, 1).normalize()
     
-    iA = nA.normalize() @ Light
-    iB = nB.normalize() @ Light
-    iC = nC.normalize() @ Light
+    # iA = nA.normalize() @ Light
+    # iB = nB.normalize() @ Light
+    # iC = nC.normalize() @ Light
 
-    intensity = iA * w + iB * u + iC * v
+    # intensity = iA * w + iB * u + iC * v
+
+    Norm = (B - A) * (C - A)
+    intensity = Norm.normalize() @ Light
 
     if intensity < 0:
         intensity = abs(intensity)
@@ -38,7 +41,22 @@ def shader(**kwargs):
         tx = vt1.x * w + vt2.x * u + vt3.x * v
         ty = vt1.y * w + vt2.y * u + vt3.y * v
 
-        return texture.get_color_with_intensity(tx, ty)
+        t = color(0, 0, 0)
+
+        if (intensity < 0.2):
+            """Multiply"""
+
+            t = color(59, 15, 65)
+
+        elif (0.2 < intensity < 0.3):
+            """Multiply"""
+
+            t = color(131, 49, 131)
+
+        else:
+            t = texture.get_color_with_intensity(tx, ty)
+
+        return t
 
     # if (y < 100):
     #     return color(255, 0, 0)
@@ -56,35 +74,31 @@ r.lookAt(V3(0, 0, 10), V3(0, 0, 0), V3(0, 1, 0))
 
 # Objetos _______________________________________
 # Amber
-print('Amber')
-Amber = Obj('Models/Amber.obj')
+print('paimon')
+Paimon = Obj('Models/Paimon.obj')
 
-# Texturas
-t1 = Texture('Models/Amber_1.bmp') # Cara
-t2 = Texture('Models/Amber_2.bmp') # Pelo
-t3 = Texture('Models/Amber_3.bmp') # Ropa
-t4 = Texture('Models/Amber_4.bmp') # Otros
+# Texturas a utilizar
+t1 = Texture('Models/Paimon_1.bmp') # cara
+t2 = Texture('Models/Paimon_2.bmp') # Pelo
+t3 = Texture('Models/Paimon_3.bmp') # Ropa
+t4 = Texture('Models/Paimon_4.bmp') # Capa
+t5 = Texture('Models/Paimon_5.bmp') # Otros
 
 """
-Orden
-1.  t1 Pestañas
-2.  t1 Cara
-3.  t2 Ojos
-4.  t3 Ojos
-5.  t3 Ropa
-6.  t2 Pelo
-resto: ropa
-"""
-texturas = [t1, t1, t2, t3, t3, t2, t3, t3]
+orden
+1. Ojos y Pestañas (blanco) t1
+2. Ojos (pupilas) t2
+3. Cara t1
+4. Piel t1
+5. Ropa t3
+6. Pelo t2
+7. Capa t4
+8. ??
+""" 
+texturas = [t1, t2, t1, t1, t3, t2, t4, t1]
 
-scale_factor = (60, 60, 60)
-trans = (500, 100, 50)
-rotation = (0, pi, 0)
-
-r.load_model_color(Amber, scale_factor, trans, rotation, texturas)
-
-scale_factor = (50, 50, 50)
-trans = (1500, 100, 50)
+scale_factor = (100, 100, 100)
+trans = (500, 0, 0)
 rotation = (0, 0, 0)
 
-r.load_model_color(Amber, scale_factor, trans, rotation, texturas)
+r.load_model_color(Paimon, scale_factor, trans, rotation, texturas)

@@ -24,6 +24,14 @@ def dword(d):
 def color(r, g, b):
     return bytes([b, g, r])
 
+def color_minmax(v):
+    if (0 < v < 255):
+        return round(v)
+    elif (v < 0):
+        return 0
+    elif (v > 255):
+        return 255
+
 """ Colores pre-establecidos """
 
 BLACK = color(0, 0, 0)

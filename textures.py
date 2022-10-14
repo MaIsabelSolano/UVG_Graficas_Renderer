@@ -72,3 +72,24 @@ class Texture(object):
 
         return p_color
 
+    def get_color_rgb(self, tx, ty):
+        
+        if ty >= 1:
+            ty -= 1
+
+        x = round(tx * self.width)
+        y = round(ty * self.height)
+
+        p_color = [0, 0, 0]
+
+        #print(x, y)
+        
+        if (y < len(self.pixels)):
+            if (x < len(self.pixels[y])):
+                b = round(self.pixels[y][x][0])
+                g = round(self.pixels[y][x][1])
+                r = round(self.pixels[y][x][2])
+
+                p_color = [r, g, b]
+
+        return p_color
