@@ -1,11 +1,17 @@
 # UVG_Graficas_Renderer
 
 Universidad del Valle de Guatemala
+
 Facultad de Ingeniería
-Departamento de ciencias de la computación
+
+Departamento de ciencias de la 
+computación
+
 Gráficas por computadora 
-2 Semestre 2022
-Ma. Isabel Solano
+
+2do Semestre 2022
+
+Ma. Isabel Solano 20504
 
 ## Acerca de
 El siguente proyecto fue desarrollado a lo largo de medio semestre con el objetivo de programar un renderizador de imágenes bmp a partir de modelos 3D
