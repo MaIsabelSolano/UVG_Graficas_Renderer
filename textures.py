@@ -39,6 +39,14 @@ class Texture(object):
 
         return self.pixels[y][x]
 
+    def color_minmax_r(self, value):
+        if (0 <= value <= 255 ):
+            return round(value)
+        elif (0 > value):
+            return 0
+        elif (value > 255):
+            return 255
+
     """
     get_color_with_intensity:(int, int, int)
 
@@ -50,7 +58,6 @@ class Texture(object):
     ty:float 
     """
     def get_color_with_intensity(self, tx, ty, intensidad = 1):
-        # print(tx, ty)
 
         if ty >= 1:
             ty -= 1
@@ -59,8 +66,6 @@ class Texture(object):
         y = round(ty * self.height)
 
         p_color = color(0, 0, 0)
-
-        #print(x, y)
         
         if (y < len(self.pixels)):
             if (x < len(self.pixels[y])):
@@ -72,7 +77,7 @@ class Texture(object):
 
         return p_color
 
-    def get_color_rgb(self, tx, ty):
+    def get_color_pastel(self, tx, ty, intensidad = 0, c = None):
         
         if ty >= 1:
             ty -= 1
@@ -80,16 +85,38 @@ class Texture(object):
         x = round(tx * self.width)
         y = round(ty * self.height)
 
-        p_color = [0, 0, 0]
+        p_color = color(0, 0, 0)
 
-        #print(x, y)
+        if (intensidad < 0.35):
         
-        if (y < len(self.pixels)):
-            if (x < len(self.pixels[y])):
-                b = round(self.pixels[y][x][0])
-                g = round(self.pixels[y][x][1])
-                r = round(self.pixels[y][x][2])
+            if (y < len(self.pixels)):
+                if (x < len(self.pixels[y])):
+                    r = round(self.pixels[y][x][2])
+                    g = round(self.pixels[y][x][1])
+                    b = round(self.pixels[y][x][0])
 
-                p_color = [r, g, b]
+                    r_2 = 200
+                    g_2 = 230
+                    b_2 = 200
+
+                    r_n = self.color_minmax_r(((b * g_2) - (g * b_2)))
+                    g_n = self.color_minmax_r(((r * b_2) - (b * r_2)))
+                    b_n = self.color_minmax_r(((g * r_2) - (r * g_2)))
+
+                    r_n = self.color_minmax_r((r - (r_n / 8)))
+                    g_n = self.color_minmax_r((g - (g_n / 8)))
+                    b_n = self.color_minmax_r((b - (b_n / 8)))
+
+                    p_color = color(r_n, g_n, b_n)
+
+        else:
+            if (y < len(self.pixels)):
+                if (x < len(self.pixels[y])):
+                    b = round(self.pixels[y][x][0])
+                    g = round(self.pixels[y][x][1])
+                    r = round(self.pixels[y][x][2])
+
+                    p_color = color(r, g, b)
+
 
         return p_color

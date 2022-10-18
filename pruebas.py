@@ -12,24 +12,21 @@ r.glClearColor(BLACK)
 r.glClear()
 
 # Shaders _______________________________________
-def shader(**kwargs):
+def Pastel_Shader(**kwargs):
     y = kwargs['y']
     x = kwargs['x']
     w, u, v = kwargs['bar']
     A, B, C = kwargs['coords']
     nA, nB, nC = kwargs['ncoords']
     texture = kwargs['textures']
-    
-    Light = V3(0, 10, 5).normalize()
-    
-    iA = nA.normalize() @ Light
-    iB = nB.normalize() @ Light
-    iC = nC.normalize() @ Light
 
-    intensity = iA * w + iB * u + iC * v
+    Light = V3(0, 1, 1).normalize()
+    Norm = (B - A) * (C - A)
+    intensity = Norm.normalize() @ Light
 
     if intensity < 0:
-        intensity = abs(intensity)
+        # Para evitar problemas con números negativos
+        intensity = 0
 
     if texture:
         
@@ -38,18 +35,10 @@ def shader(**kwargs):
         tx = vt1.x * w + vt2.x * u + vt3.x * v
         ty = vt1.y * w + vt2.y * u + vt3.y * v
 
-        return texture.get_color_with_intensity(tx, ty)
+        return texture.get_color_pastel(tx, ty, intensity)
 
-    # if (y < 100):
-    #     return color(255, 0, 0)
-    # elif (y < 150):
-    #     return color(255, 0, 0)
-    # elif ( y < 100):
-    #     return color(0, 0, 0)
-    # else:
-    #     return color(0, 0, 200)
 
-r.active_shader = shader
+r.active_shader = Pastel_Shader
 
 # Fondo_______________________________________
 fondo = Texture('Models/fondo2_m.bmp')
