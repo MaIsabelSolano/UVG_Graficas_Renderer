@@ -594,7 +594,6 @@ class Render(object):
                     if (self.zBuffer[x][y] < z):
                         self.zBuffer[x][y] = z 
 
-                        
                         self.current_color = self.active_shader(
                             y = y,
                             x = x,
@@ -606,6 +605,7 @@ class Render(object):
                             model = self
                             )
   
+
                         # else: 
                         #     if texture:
                         #         vt1, vt2, vt3 = tcoords

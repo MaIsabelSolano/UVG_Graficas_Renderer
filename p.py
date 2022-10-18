@@ -7,7 +7,7 @@ from math import *
 
 r = Render(1000, 1000,'p.bmp')
 
-r.glViewPort(2000, 2000)
+r.glViewPort(1000, 1000)
 r.glClearColor(BLACK)
 r.glClear()
 
@@ -20,19 +20,27 @@ def shader(**kwargs):
     nA, nB, nC = kwargs['ncoords']
     texture = kwargs['textures']
     
-    Light = V3(0, 1, 1).normalize()
+    Light = V3(0, 1, 0).normalize()
     
-    # iA = nA.normalize() @ Light
-    # iB = nB.normalize() @ Light
-    # iC = nC.normalize() @ Light
+    iA = nA.normalize() @ Light
+    iB = nB.normalize() @ Light
+    iC = nC.normalize() @ Light
 
-    # intensity = iA * w + iB * u + iC * v
+    intensity = iA * w + iB * u + iC * v
+
+    normal = V3(
+        nA.x * w + nB.x * u + nC.x * v, 
+        nA.y * w + nB.y * u + nC.y * v, 
+        nA.z * w + nB.z * u + nC.z * v
+    )
 
     Norm = (B - A) * (C - A)
-    intensity = Norm.normalize() @ Light
+    intensity = normal.normalize() @ Light
 
     if intensity < 0:
+        # intensity = abs(intensity)
         intensity = abs(intensity)
+
 
     if texture:
         
@@ -41,31 +49,20 @@ def shader(**kwargs):
         tx = vt1.x * w + vt2.x * u + vt3.x * v
         ty = vt1.y * w + vt2.y * u + vt3.y * v
 
-        t = color(0, 0, 0)
+        # if (intensity < 0.2):
+        #     """Multiply"""
 
-        if (intensity < 0.2):
-            """Multiply"""
+        #     t = color(59, 15, 65)
 
-            t = color(59, 15, 65)
+        # elif (0.2 < intensity < 0.3):
+        #     """Multiply"""
 
-        elif (0.2 < intensity < 0.3):
-            """Multiply"""
+        #     t = color(131, 49, 131)
 
-            t = color(131, 49, 131)
+        # else:
+        #     t = texture.get_color_with_intensity(tx, ty)
 
-        else:
-            t = texture.get_color_with_intensity(tx, ty)
-
-        return t
-
-    # if (y < 100):
-    #     return color(255, 0, 0)
-    # elif (y < 150):
-    #     return color(255, 0, 0)
-    # elif ( y < 100):
-    #     return color(0, 0, 0)
-    # else:
-    #     return color(0, 0, 200)
+        return texture.get_color_with_intensity(tx, ty, intensity)
 
 r.active_shader = shader
 

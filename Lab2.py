@@ -51,28 +51,67 @@ def shader(**kwargs):
             round(159)
         )
     elif (320 <= y < 360):
-        return color(
-            round(220 * intensity),
-            round(210 * intensity),
-            round(200)
-        )
+
+        if (((x - 550)**2 + 1.25*(y - 380)**2) < 1500):
+            
+            return color(
+                round(213 * intensity),
+                round(105 * intensity),
+                round(54),
+            )
+
+        else:
+            return color(
+                round(220 * intensity),
+                round(210 * intensity),
+                round(200)
+            )
     elif (355 <= y < 365):
-        return color(
-            round(217 * intensity),
-            round(170 * intensity),
-            round(190)
-        )
+
+        if (((x - 550)**2 + 1.25*(y - 380)**2) < 1500):
+            
+            return color(
+                round(213 * intensity),
+                round(105 * intensity),
+                round(54),
+            )
+
+        else:
+            return color(
+                round(217 * intensity),
+                round(170 * intensity),
+                round(190)
+            )
     elif (360 <= y < 420):
-        return color(
-            round(215 * intensity),
-            round(131 * intensity),
-            round(108)
-        )
+
+        if (((x - 550)**2 + 1.25*(y - 380)**2) < 1500):
+            
+            return color(
+                round(213 * intensity),
+                round(105 * intensity),
+                round(54),
+            )
+        
+        else:
+            return color(
+                round(215 * intensity),
+                round(131 * intensity),
+                round(108)
+            )
     elif (420 <= y < 450):
-        return color(
-            round(220 * intensity),
-            round(210 * intensity),
-            round(200)
+        
+        if (((x - 550)**2 + 1.25*(y - 380)**2) < 1500):
+            
+            return color(
+                round(213 * intensity),
+                round(105 * intensity),
+                round(54),
+            )
+        else:
+            return color(
+                round(220 * intensity),
+                round(210 * intensity),
+                round(200)
         )
     elif (450 <= y < 460):
         return color(
