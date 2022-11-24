@@ -23,7 +23,7 @@ class V4(object):
 
     def __mul__(self, other):
         if (type(other) == int or type(other) == float):
-            return V3(
+            return V4(
                 self.x * other,
                 self.y * other,
                 self.z * other,

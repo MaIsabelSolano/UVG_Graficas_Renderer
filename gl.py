@@ -669,7 +669,7 @@ class Render(object):
         c_y = cordenada.y
         c_z = cordenada.z
 
-        u= 0
+        u = 0
         v = 0
         w = 0
 
